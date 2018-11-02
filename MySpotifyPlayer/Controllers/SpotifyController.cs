@@ -17,7 +17,7 @@ namespace MySpotifyPlayer.Controllers
     {
         private string state;
         private string redirect_uri = "https://localhost:5001/api/spotify/callback";
-        private AuthorizationToken authToken;
+        public static AuthorizationToken authToken;
 
         private string GenerateRandomString(int length)
         {

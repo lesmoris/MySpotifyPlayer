@@ -1,9 +1,15 @@
-﻿@{
+﻿@using MySpotifyPlayer.Models
+@{
     ViewData["Title"] = "LogIn Page";
 }
+
+@{ var user = (User)ViewData["User"]; }
 
 <div class="row">
     <div class="col-md-3">
         <h2>You are loged in!</h2>
+        <ul>
+            <li> @user.email </li>
+        </ul>
     </div>
 </div>
