@@ -25,7 +25,7 @@ namespace MySpotifyPlayer.Controllers
 
         [HttpGet]
         [Route("login")]
-        public void login()
+        public RedirectResult Login()
         {
             //generate state and save it locally
             var client_id = "93f3bc83b01b433caba41235e75e7ad2";
@@ -35,18 +35,12 @@ namespace MySpotifyPlayer.Controllers
             var response_type = "code";
 
             var url = string.Format("https://accounts.spotify.com/authorize?client_id={0}&response_type={1}&redirect_uri={2}&scope={3}&state={4}", client_id, response_type, redirect_uri, scope, state);
-            var client = new RestClient(url);
-
-            client.Proxy = new WebProxy("192.168.80.27", 9700);
-            client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-
-            var request = new RestRequest(Method.GET);
-            IRestResponse response = client.Execute(request);
+            return RedirectPermanent(url);
         }
 
         [HttpGet]
         [Route("callback")]
-        public void callback(string code, string state)
+        public void Callback(string code, string state)
         {
             //compare received state with previously saved sata
         }
