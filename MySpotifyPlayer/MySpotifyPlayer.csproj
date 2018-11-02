@@ -8,7 +8,14 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="RestSharp" Version="106.5.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Home\LogedIn.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
   </ItemGroup>
 
 </Project>

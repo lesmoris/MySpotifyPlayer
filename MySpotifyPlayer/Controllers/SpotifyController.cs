@@ -5,6 +5,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MySpotifyPlayer.Models;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace MySpotifyPlayer.Controllers
@@ -14,6 +16,8 @@ namespace MySpotifyPlayer.Controllers
     public class SpotifyController : ControllerBase
     {
         private string state;
+        private string redirect_uri = "https://localhost:5001/api/spotify/callback";
+        private AuthorizationToken authToken;
 
         private string GenerateRandomString(int length)
         {
@@ -25,12 +29,11 @@ namespace MySpotifyPlayer.Controllers
 
         [HttpGet]
         [Route("login")]
-        public RedirectResult Login()
+        public ActionResult Login()
         {
             //generate state and save it locally
             var client_id = "93f3bc83b01b433caba41235e75e7ad2";
             state = GenerateRandomString(16);
-            var redirect_uri = "https://localhost:5001/api/spotify/callback";
             var scope = "user-read-private user-read-email";
             var response_type = "code";
 
@@ -40,10 +43,28 @@ namespace MySpotifyPlayer.Controllers
 
         [HttpGet]
         [Route("callback")]
-        public void Callback(string code, string state)
+        public ActionResult Callback(string code, string state)
         {
             //compare received state with previously saved sata
-        }
 
+            //get the token from Spotify
+
+            var url = string.Format("https://accounts.spotify.com/api/token");
+
+            var client = new RestClient(url);
+            client.Proxy = new WebProxy("192.168.80.27", 9700);
+            client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Authorization", "Basic OTNmM2JjODNiMDFiNDMzY2FiYTQxMjM1ZTc1ZTdhZDI6MGI1MGMwODQ2Yjc1NGFhZTkyNWJmMDMxN2VhODRkZDI=");
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddParameter("undefined", string.Format("code={0}&redirect_uri={1}&grant_type=authorization_code", code, redirect_uri), ParameterType.RequestBody);
+
+            IRestResponse response = client.Execute(request);
+
+            authToken = JsonConvert.DeserializeObject<AuthorizationToken>(response.Content);
+
+            return RedirectToAction("LogedIn", "Home");
+        }
     }
 }
