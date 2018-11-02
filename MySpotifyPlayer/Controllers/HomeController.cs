@@ -13,16 +13,18 @@ namespace MySpotifyPlayer.Controllers
 {
     public class HomeController : Controller
     {
-
         private User user;
+        private AuthorizationToken authToken;
 
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult LogedIn()
+        public IActionResult LogedIn(AuthorizationToken authToken)
         {
+            this.authToken = authToken;
+
             // You are here cause you were correctly authenticated with Spotify, so let's get some data from you...
             var url = string.Format("https://api.spotify.com/v1/me");
 
@@ -31,7 +33,7 @@ namespace MySpotifyPlayer.Controllers
             client.Proxy.Credentials = CredentialCache.DefaultCredentials;
 
             var request = new RestRequest(Method.GET);
-            request.AddHeader("Authorization", string.Format("Bearer {0}", SpotifyController.authToken.access_token));
+            request.AddHeader("Authorization", string.Format("Bearer {0}", authToken.access_token));
             IRestResponse response = client.Execute(request);
 
             user = JsonConvert.DeserializeObject<User>(response.Content);
